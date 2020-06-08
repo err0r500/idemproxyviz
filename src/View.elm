@@ -37,7 +37,7 @@ reqStateColor r =
             "#EAB3F5"
 
 
-msgToString : Msg -> String
+msgToString : Action -> String
 msgToString msg =
     case msg of
         HitProxy x ->
@@ -45,9 +45,6 @@ msgToString msg =
 
         HitServer x ->
             String.fromInt x ++ " hitserver"
-
-        Picked x ->
-            String.fromInt x ++ " picked"
 
 
 divAttrByState : ReqState -> List (Html.Attribute a)
@@ -82,11 +79,11 @@ divByState s reqs =
     ]
 
 
-nextMoveDiv : List Msg -> Html Msg
+nextMoveDiv : List Action -> Html Msg
 nextMoveDiv msgs =
     case msgs of
         [] ->
             div [] [ text "please, pick a message" ]
 
         _ ->
-            div [] <| List.map (\msg -> button [ onClick msg ] [ text <| msgToString msg ]) msgs
+            div [] <| List.map (\action -> button [ onClick (Do action) ] [ text <| msgToString action ]) msgs

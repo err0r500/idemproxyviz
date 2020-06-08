@@ -10,9 +10,13 @@ type ReqState
 
 
 type Msg
+    = Do Action
+    | Picked Int
+
+
+type Action
     = HitProxy Int
     | HitServer Int
-    | Picked Int
 
 
 updateReqState : ReqState -> Maybe ReqState -> Maybe ReqState
