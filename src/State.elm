@@ -32,3 +32,8 @@ updateReqState r mR =
 setState : Dict Int ReqState -> Int -> ReqState -> Dict Int ReqState
 setState reqs i state =
     Dict.update i (updateReqState state) reqs
+
+
+reqsByState : Dict Int ReqState -> ReqState -> Dict Int ReqState
+reqsByState reqs st =
+    Dict.filter (\_ v -> v == st) reqs

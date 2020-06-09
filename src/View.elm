@@ -37,8 +37,8 @@ reqStateColor r =
             "#EAB3F5"
 
 
-msgToString : Action -> String
-msgToString msg =
+actionString : Action -> String
+actionString msg =
     case msg of
         HitProxy x ->
             String.fromInt x ++ " hitproxy"
@@ -51,7 +51,11 @@ divAttrByState : ReqState -> List (Html.Attribute a)
 divAttrByState s =
     let
         common =
-            [ style "margin-left" "10px", style "padding" "10px", style "float" "left", style "width" "100px" ]
+            [ style "margin-left" "10px"
+            , style "padding" "10px"
+            , style "float" "left"
+            , style "width" "100px"
+            ]
     in
     case s of
         Pending ->
@@ -64,8 +68,8 @@ divAttrByState s =
             List.append common [ style "background-color" (reqStateColor s) ]
 
 
-reqsByState : ReqState -> Dict Int ReqState -> List Int
-reqsByState s reqs =
+reqsInState : ReqState -> Dict Int ReqState -> List Int
+reqsInState s reqs =
     List.map Tuple.first <| List.filter (\t -> Tuple.second t == s) <| Dict.toList reqs
 
 
@@ -76,7 +80,7 @@ divByState s reqs =
         , div [] <|
             List.map
                 (\id -> div [] [ button [ onClick (Picked id) ] [ text <| String.fromInt id ] ])
-                (reqsByState s reqs)
+                (reqsInState s reqs)
         ]
 
 
@@ -95,7 +99,7 @@ moveMsg msgs =
             div [] [ text "please, pick a message" ]
 
         _ ->
-            div [] <| List.map (\action -> button [ onClick (Do action) ] [ text <| msgToString action ]) msgs
+            div [] <| List.map (\action -> button [ onClick (Do action) ] [ text <| actionString action ]) msgs
 
 
 errDiv : List String -> Html a

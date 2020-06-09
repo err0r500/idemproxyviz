@@ -46,18 +46,23 @@ update msg model =
 
 
 activatedActions : Model -> List Action
-activatedActions model =
-    case Dict.get model.picked model.reqs of
+activatedActions m =
+    case Dict.get m.picked m.reqs of
         Nothing ->
+            -- model.picked is not a req key
             []
 
         Just st ->
             case st of
                 Pending ->
-                    [ HitProxy model.picked ]
+                    [ HitProxy m.picked ]
 
                 InProxy ->
-                    [ HitServer model.picked ]
+                    if Dict.size (reqsByState m.reqs Processed) == 0 then
+                        [ HitServer m.picked ]
+
+                    else
+                        []
 
                 Processed ->
                     []
@@ -65,12 +70,13 @@ activatedActions model =
 
 
 -- Invariants
+-- the list of invariants that must be respected all the time
 
 
-processedOnce : Model -> Maybe String
-processedOnce m =
-    if Dict.size (Dict.filter (\_ v -> v == Processed) m.reqs) > 1 then
-        Just "more than one processed"
+processOnlyOnce : Model -> Maybe String
+processOnlyOnce m =
+    if Dict.size (reqsByState m.reqs Processed) > 1 then
+        Just "processOnlyOnce failed"
 
     else
         Nothing
@@ -78,7 +84,7 @@ processedOnce m =
 
 invariantsCheck : Model -> List String
 invariantsCheck m =
-    List.filterMap identity [ processedOnce m ]
+    List.filterMap identity [ processOnlyOnce m ]
 
 
 
