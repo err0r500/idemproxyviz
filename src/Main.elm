@@ -20,7 +20,7 @@ type alias Model =
 
 initialModel : Model
 initialModel =
-    { reqs = Dict.fromList <| List.indexedMap Tuple.pair <| List.repeat 10 Pending
+    { reqs = Dict.fromList <| List.indexedMap Tuple.pair <| List.repeat 4 Pending
     , picked = -1
     , failedInvariants = []
     }
@@ -36,6 +36,9 @@ update msg model =
 
                 HitServer req ->
                     { model | reqs = setState model.reqs req Processed }
+
+                HitCache req ->
+                    { model | reqs = setState model.reqs req FromCache }
 
         Picked p ->
             { model | picked = p }
@@ -61,10 +64,16 @@ activatedActions m =
                     if Dict.size (reqsByState m.reqs Processed) == 0 then
                         [ HitServer m.picked ]
 
+                    else if Dict.size (reqsByState m.reqs Processed) == 1 then
+                        [ HitCache m.picked ]
+
                     else
                         []
 
                 Processed ->
+                    []
+
+                FromCache ->
                     []
 
 
@@ -99,6 +108,7 @@ view model =
         , divByState Pending model.reqs
         , divByState InProxy model.reqs
         , divByState Processed model.reqs
+        , divByState FromCache model.reqs
         ]
 
 

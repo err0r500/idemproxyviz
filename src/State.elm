@@ -7,6 +7,7 @@ type ReqState
     = Pending
     | InProxy
     | Processed
+    | FromCache
 
 
 type Msg
@@ -17,6 +18,7 @@ type Msg
 type Action
     = HitProxy Int
     | HitServer Int
+    | HitCache Int
 
 
 updateReqState : ReqState -> Maybe ReqState -> Maybe ReqState

@@ -19,9 +19,12 @@ reqStateString r =
         Processed ->
             "processed"
 
+        FromCache ->
+            "fromCache"
 
 
--- , #9AF5A4, #BDA6F5
+
+-- #BDA6F5
 
 
 reqStateColor : ReqState -> String
@@ -36,15 +39,21 @@ reqStateColor r =
         Processed ->
             "#EAB3F5"
 
+        FromCache ->
+            "#9AF5A4"
+
 
 actionString : Action -> String
 actionString msg =
     case msg of
         HitProxy x ->
-            String.fromInt x ++ " hitproxy"
+            String.fromInt x ++ " -> hitProxy"
 
         HitServer x ->
-            String.fromInt x ++ " hitserver"
+            String.fromInt x ++ " -> hitServer"
+
+        HitCache x ->
+            String.fromInt x ++ " -> hitCache"
 
 
 divAttrByState : ReqState -> List (Html.Attribute a)
@@ -54,7 +63,7 @@ divAttrByState s =
             [ style "margin-left" "10px"
             , style "padding" "10px"
             , style "float" "left"
-            , style "width" "100px"
+            , style "min-width" "100px"
             ]
     in
     case s of
@@ -65,6 +74,9 @@ divAttrByState s =
             List.append common [ style "background-color" (reqStateColor s) ]
 
         Processed ->
+            List.append common [ style "background-color" (reqStateColor s) ]
+
+        FromCache ->
             List.append common [ style "background-color" (reqStateColor s) ]
 
 
