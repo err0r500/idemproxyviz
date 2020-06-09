@@ -69,21 +69,35 @@ reqsByState s reqs =
     List.map Tuple.first <| List.filter (\t -> Tuple.second t == s) <| Dict.toList reqs
 
 
-divByState : ReqState -> Dict Int ReqState -> List (Html Msg)
+divByState : ReqState -> Dict Int ReqState -> Html Msg
 divByState s reqs =
-    [ h2 [] [ text <| reqStateString s ]
-    , div [] <|
-        List.map
-            (\id -> div [] [ button [ onClick (Picked id) ] [ text <| String.fromInt id ] ])
-            (reqsByState s reqs)
-    ]
+    div (divAttrByState s)
+        [ h2 [] [ text <| reqStateString s ]
+        , div [] <|
+            List.map
+                (\id -> div [] [ button [ onClick (Picked id) ] [ text <| String.fromInt id ] ])
+                (reqsByState s reqs)
+        ]
 
 
 nextMoveDiv : List Action -> Html Msg
-nextMoveDiv msgs =
+nextMoveDiv actions =
+    div [ style "margin-bottom" "10px" ]
+        [ h2 [] [ text "next move" ]
+        , moveMsg actions
+        ]
+
+
+moveMsg : List Action -> Html Msg
+moveMsg msgs =
     case msgs of
         [] ->
             div [] [ text "please, pick a message" ]
 
         _ ->
             div [] <| List.map (\action -> button [ onClick (Do action) ] [ text <| msgToString action ]) msgs
+
+
+errDiv : List String -> Html a
+errDiv errs =
+    div [ style "color" "red" ] <| List.map (\x -> text x) errs

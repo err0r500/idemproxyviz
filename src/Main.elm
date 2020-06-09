@@ -2,10 +2,13 @@ module Main exposing (main)
 
 import Browser
 import Dict exposing (Dict)
-import Html exposing (Html, button, div, h2, text)
-import Html.Attributes exposing (style)
+import Html exposing (Html, div)
 import State exposing (..)
 import View exposing (..)
+
+
+
+-- Global State
 
 
 type alias Model =
@@ -38,6 +41,10 @@ update msg model =
             { model | picked = p }
 
 
+
+-- Actions
+
+
 activatedActions : Model -> List Action
 activatedActions model =
     case Dict.get model.picked model.reqs of
@@ -56,6 +63,10 @@ activatedActions model =
                     []
 
 
+
+-- Invariants
+
+
 processedOnce : Model -> Maybe String
 processedOnce m =
     if Dict.size (Dict.filter (\_ v -> v == Processed) m.reqs) > 1 then
@@ -70,17 +81,18 @@ invariantsCheck m =
     List.filterMap identity [ processedOnce m ]
 
 
+
+-- View
+
+
 view : Model -> Html Msg
 view model =
     div []
-        [ div [ style "margin-bottom" "10px" ]
-            [ h2 [] [ text "next move" ]
-            , nextMoveDiv <| activatedActions model
-            ]
-        , div [style "color" "red"] <| List.map (\x -> text x) <| invariantsCheck model
-        , div (divAttrByState Pending) (divByState Pending model.reqs)
-        , div (divAttrByState InProxy) (divByState InProxy model.reqs)
-        , div (divAttrByState Processed) (divByState Processed model.reqs)
+        [ nextMoveDiv <| activatedActions model
+        , errDiv <| invariantsCheck model
+        , divByState Pending model.reqs
+        , divByState InProxy model.reqs
+        , divByState Processed model.reqs
         ]
 
 
